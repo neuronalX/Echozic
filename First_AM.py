@@ -9,11 +9,6 @@ import numpy.fft as fft
 from scipy.signal import find_peaks
 
 leak_rate = 0.9
-
-def update_lr():
-    print("calledd")
-    leak_rate = 1.9
-    #reseau()
     
 rpy.verbosity(0)  # no need to be too verbose here
 rpy.set_seed(42)  # make everything reproducible !
@@ -30,7 +25,7 @@ f_carrier = 440  # Carrier frequency in Hz (A4 note)
 modulation_index = 1.0  # Modulation index determines the depth of modulation
 
 reservoir = Reservoir(100, lr=0.9, sr=0.9,input_scaling=0.3)
-X = lorenz(duration*fs)
+X = lorenz(duration*fs, h=0.01)
 #X = mackey_glass(88200)
 #X = np.sin(np.linspace(0, 6*np.pi, 88200)).reshape(-1, 1)
 """ note = np.sin(np.linspace(0, 440*np.pi, 32000))
@@ -100,7 +95,7 @@ plt.show()
 
 # Saving the AM signal as a WAV file
 am_signal_normalized = np.int16((am_signal / am_signal.max()) * 32767)  # Normalize the signal
-write('am_signal_neurone.wav', fs, am_signal_normalized)
+write('am_lorenz_hmodif.wav', fs, am_signal_normalized)
     
     
 """ newY = y
