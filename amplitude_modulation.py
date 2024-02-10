@@ -60,7 +60,7 @@ y = states[:, 25]
 x = states[:, 60]
 
 
-#========INITIALISATION DES PARAMETRES POUR LE RESERVOIR========
+#========INITIALISATION DES PARAMETRES POUR LE RESERVOIR ========
 units = 100               # - number of neurons
 leak_rate = 0.3           # - leaking rate
 spectral_radius = 1.25    # - spectral radius of W
@@ -77,7 +77,7 @@ X = mackey_glass(nb_steps)
 # rescale between -1 and 1
 X = 2 * (X - X.min()) / (X.max() - X.min()) - 1
 
-#========CHANGEMENT DES PARAMETRES SPECTRAL RADIUS==========
+#========CHANGEMENT DES PARAMETRES SPECTRAL RADIUS ==========
 states0 = []
 radii = [0.1, 1.25, 10.0]
 for sr in radii:
@@ -89,10 +89,10 @@ for sr in radii:
                           input_connectivity=input_connectivity,
                           seed=seed)
 
-    s = reservoir.run(X[:int(nb_steps/10)])
+    s = reservoir.run(X[:int(nb_steps)])
     states0.append(s)
 
-#======AFFICHAGE DE L ACTIVITE D UN NEURONE POUR DIFFERENT SPECTRAL RADIUS==========
+#======AFFICHAGE DE L ACTIVITE D UN NEURONE POUR DIFFERENT SPECTRAL RADIUS ==========
 units_nb = 20
 
 plt.figure()
@@ -102,7 +102,7 @@ plt.figure(figsize=(15, 8))
 
 for i, s in enumerate(states0):
     plt.subplot(len(radii)*100+10+i+1)
-    plt.plot(s[:, 0:100], alpha=0.6)
+    plt.plot(s[:, 10:15], alpha=0.6)
     plt.ylabel(f"$sr={radii[i]}$")
 plt.xlabel(f"Activations ({units_nb} neurons)")
 plt.show()
@@ -110,45 +110,50 @@ plt.show()
 #======= MODULATION ========
 
 #modulator = y
-modulator = states[0][:,25]
+i=0
+for state in states0 :
 
-# Time array
-t = np.arange(0, duration, 1/fs)
+    modulator = state[:,25]
 
-# Carrier and Modulator signals
-carrier = np.sin(2 * np.pi * f_carrier * t)  # Carrier signal
-#modulator = (modulation_index * np.sin(2 * np.pi * f_modulator * t)) + 1  # Modulator signal; +1 to ensure carrier amplitude is always positive
+    # Time array
+    t = np.arange(0, duration, 1/fs)
 
-# Amplitude Modulated signal
-am_signal = carrier * modulator
+    # Carrier and Modulator signals
+    carrier = np.sin(2 * np.pi * f_carrier * t)  # Carrier signal
+    #modulator = (modulation_index * np.sin(2 * np.pi * f_modulator * t)) + 1  # Modulator signal; +1 to ensure carrier amplitude is always positive
 
-# Plotting
-plt.figure(figsize=(10, 8))
+    # Amplitude Modulated signal
+    am_signal = carrier * modulator
 
-# Carrier Signal
-plt.subplot(3, 1, 1)
-plt.plot(t, carrier)
-plt.title('Carrier Signal')
-plt.xlim(0, 0.3)  # Limiting time axis for better visibility
+    # Plotting
+    plt.figure(figsize=(10, 8))
 
-# Modulator Signal
-plt.subplot(3, 1, 2)
-plt.plot(t, modulator)
-plt.title('Modulator Signal')
-plt.xlim(0,  0.3)  # Limiting time axis for better visibility
+    # Carrier Signal
+    plt.subplot(3, 1, 1)
+    plt.plot(t, carrier)
+    plt.title('Carrier Signal')
+    plt.xlim(0, 0.3)  # Limiting time axis for better visibility
 
-# AM Signal
-plt.subplot(3, 1, 3)
-plt.plot(t, am_signal)
-plt.title('AM Signal')
-plt.xlim(0,  0.3)  # Limiting time axis for better visibility
+    # Modulator Signal
+    plt.subplot(3, 1, 2)
+    plt.plot(t, modulator)
+    plt.title('Modulator Signal')
+    plt.xlim(0,  0.3)  # Limiting time axis for better visibility
 
-plt.tight_layout()
-plt.show()
+    # AM Signal
+    plt.subplot(3, 1, 3)
+    plt.plot(t, am_signal)
+    plt.title('AM Signal')
+    plt.xlim(0,  0.3)  # Limiting time axis for better visibility
 
-# Saving the AM signal as a WAV file
-am_signal_normalized = np.int16((am_signal / am_signal.max()) * 32767)  # Normalize the signal
-write('am_signal_neurone.wav', fs, am_signal_normalized)
+    plt.tight_layout()
+    plt.show()
+
+    # Saving the AM signal as a WAV file
+    am_signal_normalized = np.int16((am_signal / am_signal.max()) * 32767)  # Normalize the signal
+    file_name = 'am_signal_neurone_spectral_radius'+ str(i)+'.wav'
+    write(file_name, fs, am_signal_normalized)
+    i=i+1
     
     
 """ newY = y
