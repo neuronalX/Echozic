@@ -8,12 +8,86 @@ from scamp import *
 import numpy.fft as fft
 from scipy.signal import find_peaks
 
-leak_rate = 0.9
+def get_states_reservoir(radii, scaling, leak_rate) :
+    parametre_changeant = [0]
+    states = []
+    if isinstance(radii, list) : 
+        for sr in radii:
+            reservoir = Reservoir(units,
+                sr=sr,
+                input_scaling=scaling,
+                lr=leak_rate,
+                rc_connectivity=connectivity,
+                input_connectivity=input_connectivity,
+                seed=seed)
 
-def update_lr():
-    print("calledd")
-    leak_rate = 1.9
-    #reseau()
+            s = reservoir.run(X[:int(nb_steps)])
+            states.append(s)
+        parametre_changeant = radii.copy()
+        nom_param = 'sr'
+        
+    elif isinstance(scaling, list) :
+        for i_scal in scaling:
+            reservoir = Reservoir(units,
+                sr=radii,
+                input_scaling=i_scal,
+                lr=leak_rate,
+                rc_connectivity=connectivity,
+                input_connectivity=input_connectivity,
+                seed=seed)
+
+            s = reservoir.run(X[:int(nb_steps)])
+            states.append(s)
+        parametre_changeant = scaling.copy()
+        nom_param = 'iss'
+
+    elif isinstance(leak_rate,list) :
+        for un_lr in leak_rate:
+            reservoir = Reservoir(units,
+                sr=radii,
+                input_scaling=scaling,
+                lr=un_lr,
+                rc_connectivity=connectivity,
+                input_connectivity=input_connectivity,
+                seed=seed)
+
+            s = reservoir.run(X[:int(nb_steps)])
+            states.append(s)
+        parametre_changeant = leak_rate.copy()
+        nom_param = 'lr'
+    else :
+        reservoir = Reservoir(units,
+            sr=radii[0],
+            input_scaling=scaling[0],
+            lr=leak_rate[0],
+            rc_connectivity=connectivity,
+            input_connectivity=input_connectivity,
+            seed=seed)
+
+        s = reservoir.run(X[:int(nb_steps)])
+        states.append(s)
+        nom_param='param'
+        
+    #======AFFICHAGE DE L ACTIVITE D UN NEURONE POUR DIFFERENT SPECTRAL RADIUS ==========
+    units_nb = 20
+
+    plt.figure()
+    plt.plot(X)
+
+    plt.figure(figsize=(15, 8))
+    
+    print(parametre_changeant)
+
+    for i, s in enumerate(states):
+        plt.subplot(len(parametre_changeant)*100+10+i+1)
+        plt.plot(s[:, 0:5], alpha=0.6)
+        plt.ylabel(str(nom_param)+" = ")
+    plt.xlabel(f"Activations ({units_nb} neurons)")
+    plt.show()
+    
+    return states
+        
+
     
 rpy.verbosity(0)  # no need to be too verbose here
 rpy.set_seed(42)  # make everything reproducible !
@@ -78,34 +152,15 @@ X = mackey_glass(nb_steps)
 X = 2 * (X - X.min()) / (X.max() - X.min()) - 1
 
 #========CHANGEMENT DES PARAMETRES SPECTRAL RADIUS ==========
-states0 = []
 radii = [0.1, 1.25, 10.0]
-for sr in radii:
-    reservoir = Reservoir(units,
-                          sr=sr,
-                          input_scaling=0.1,
-                          lr=leak_rate,
-                          rc_connectivity=connectivity,
-                          input_connectivity=input_connectivity,
-                          seed=seed)
+states0 = get_states_reservoir(radii,input_scaling, leak_rate)
 
-    s = reservoir.run(X[:int(nb_steps)])
-    states0.append(s)
+#scalings = [0.1, 1.0, 10.]
+#states0 = get_states_reservoir(spectral_radius,scalings, leak_rate)
 
-#======AFFICHAGE DE L ACTIVITE D UN NEURONE POUR DIFFERENT SPECTRAL RADIUS ==========
-units_nb = 20
+#rates = [0.02, 0.3, 1.0]
+#states0 = get_states_reservoir(spectral_radius,input_scaling, rates)
 
-plt.figure()
-plt.plot(X)
-
-plt.figure(figsize=(15, 8))
-
-for i, s in enumerate(states0):
-    plt.subplot(len(radii)*100+10+i+1)
-    plt.plot(s[:, 10:15], alpha=0.6)
-    plt.ylabel(f"$sr={radii[i]}$")
-plt.xlabel(f"Activations ({units_nb} neurons)")
-plt.show()
 
 #======= MODULATION ========
 
@@ -151,9 +206,11 @@ for state in states0 :
 
     # Saving the AM signal as a WAV file
     am_signal_normalized = np.int16((am_signal / am_signal.max()) * 32767)  # Normalize the signal
-    file_name = 'am_signal_neurone_spectral_radius'+ str(i)+'.wav'
+    file_name = 'am_signal_neurone_radius'+ str(i)+'.wav'
     write(file_name, fs, am_signal_normalized)
     i=i+1
+    
+    
     
     
 """ newY = y
