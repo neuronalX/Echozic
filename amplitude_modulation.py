@@ -80,8 +80,8 @@ def get_states_reservoir(radii, scaling, leak_rate) :
 
     for i, s in enumerate(states):
         plt.subplot(len(parametre_changeant)*100+10+i+1)
-        plt.plot(s[:, 0:5], alpha=0.6)
-        plt.ylabel(str(nom_param)+" = ")
+        plt.plot(s[:, 25], alpha=0.6)
+        plt.ylabel(str(nom_param)+" = "+str(parametre_changeant[i]))
     plt.xlabel(f"Activations ({units_nb} neurons)")
     plt.show()
     
@@ -206,41 +206,10 @@ for state in states0 :
 
     # Saving the AM signal as a WAV file
     am_signal_normalized = np.int16((am_signal / am_signal.max()) * 32767)  # Normalize the signal
-    file_name = 'am_signal_neurone_radius'+ str(i)+'.wav'
+    file_name = 'am_signal_spectral_radius'+ str(i)+'.wav'
     write(file_name, fs, am_signal_normalized)
     i=i+1
     
     
     
-    
-""" newY = y
-for i in range(1000):
-    newY += y """
-    
-""" print(y)
-plt.plot(y)
-plt.show() """
 
-""" spectrum = fft.fft(y)
-freq = fft.fftfreq(len(spectrum))
-plt.plot(freq, abs(spectrum))
-plt.show() """
-
-""" threshold = 0.5 * max(abs(spectrum))
-mask = abs(spectrum) > threshold
-peaks = freq[mask]
-
-t = np.arange(4e6) / 1e6 # sampling times in seconds
-data = np.sin(2 * np.pi * 1000 * t)
-
-print(data)
-    """
-    
-"""plt.plot(y)
-plt.show()
-# amplitudes = 2 / n_samples * np.abs()
-print("amp ", find_peaks(x, height=0)) """
-
-#write('noise.wav', len(y), y)
-#write('noise.wav', 16000, y)
-#print("leny = ", len(y))

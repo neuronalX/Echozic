@@ -85,6 +85,8 @@ derive_neurone = []
 for i in range(1, len(y)):
     derive_neurone.append(abs(y[i] - y[i-1]))
 
+plt.plot(derive_neurone)
+plt.show()
 write('derive.wav', 16000, np.array(derive_neurone))
 
 
