@@ -60,7 +60,10 @@ y = states[:, 25]
 x = states[:, 60]
 
 array_decale = [y[1:len(y)-1]]
+array_decale.add(2*y[len(y)-1])
  
 print("y : ", y)
 print("array_decale : ", array_decale)
 
+derive_neurone = abs(y -array_decale)
+print(derive_neurone)
