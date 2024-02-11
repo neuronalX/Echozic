@@ -59,8 +59,32 @@ print("states \n", states)
 y = states[:, 25]
 x = states[:, 60]
 
-array_decale = [y[1:len(y)-1]]
+#array_decale = np.array([y[1:len(y)]]).reshape(len(y)-1, 0)
+#print(array_decale.shape)
+
+print(y.shape)
+#np.insert(array_decale,len(array_decale)-1, 2*y[len(y)-1])
+
  
 print("y : ", y)
-print("array_decale : ", array_decale)
+#print("array_decale : ", array_decale)
+
+#derive_neurone = abs(y-array_decale)
+#plt.plot(y)
+#plt.show()
+
+##print(derive_neurone.shape)
+#print("Y shape ",y.shape)
+
+#print("decale shape ",array_decale.shape)
+
+#print(derive_neurone)
+#write('derive.wav', 16000, derive_neurone)
+
+derive_neurone = []
+for i in range(1, len(y)):
+    derive_neurone.append(abs(y[i] - y[i-1]))
+
+write('derive.wav', 16000, np.array(derive_neurone))
+
 

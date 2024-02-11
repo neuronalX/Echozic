@@ -10,6 +10,7 @@ import numpy.fft as fft
 from scipy.signal import find_peaks
 import pandas as pd
 from mingus.core import chords
+import librosa
 
 
 #==============
@@ -106,7 +107,7 @@ x = states[:, 1]
 
 clarinet = scamp.new_part("clarinet")
 
-noteToPlay = note_to_number('A', 1)
+noteToPlay = librosa.note_to_midi('A')
 clarinet.play_note(noteToPlay, 0.8, 50) 
 
 for i in range(5):
@@ -114,14 +115,14 @@ for i in range(5):
     if(isSature):
         match i:
             case 1:
-                clarinet.play_note("A", 0.8, 0.5) 
+                clarinet.play_note(librosa.note_to_midi('A'), 0.8, 0.5) 
             case 2:
-               clarinet.play_note(70, 0.8, 0.5)
+               clarinet.play_note(librosa.note_to_midi('C'), 0.8, 0.5)
             case 3:
-                clarinet.play_note(70, 0.8, 0.5)
+                clarinet.play_note(librosa.note_to_midi('E'), 0.8, 0.5)
             case 4:
-                clarinet.play_note(70, 0.8, 0.5)
+                clarinet.play_note(librosa.note_to_midi('A'), 0.8, 0.5)
             case 5:
-                clarinet.play_note(70, 0.8, 0.5)
+                clarinet.play_note(librosa.note_to_midi('A'), 0.8, 0.5)
 
 
